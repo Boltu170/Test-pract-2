@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Accounting Quiz 2</title>
+<style>
+:root{--bg:#f6f7f9;--card:#fff;--tx:#1d2733;--mu:#667;--ac:#0b2a5b;--ok:#1b7f3b;--okb:#e5f5ea;--no:#b3261e;--nob:#fbe9e7;--bd:#d5d9df}
+@media(prefers-color-scheme:dark){:root{--bg:#12161c;--card:#1b2129;--tx:#e8ecf1;--mu:#9aa5b1;--ac:#6ea0ff;--ok:#5fd183;--okb:#183524;--no:#ff8a80;--nob:#3a1d1a;--bd:#2f3843}}
+*{box-sizing:border-box}
+body{margin:0;font:16px/1.45 system-ui,sans-serif;background:var(--bg);color:var(--tx)}
+main{max-width:720px;margin:0 auto;padding:16px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:18px}
+h1{font-size:1.4rem;margin:.2rem 0 1rem}
+.bar{height:6px;background:var(--bd);border-radius:3px;margin:8px 0 14px}
+.bar i{display:block;height:100%;background:var(--ac);border-radius:3px}
+.meta{color:var(--mu);font-size:.9rem;display:flex;justify-content:space-between}
+.opt{display:block;width:100%;text-align:left;margin:8px 0;padding:12px;border:1px solid var(--bd);border-radius:10px;background:var(--card);color:var(--tx);font:inherit;cursor:pointer}
+.opt:hover:not(:disabled){border-color:var(--ac)}
+.opt.ok{background:var(--okb);border-color:var(--ok)}
+.opt.no{background:var(--nob);border-color:var(--no)}
+.btn{padding:11px 18px;border:0;border-radius:10px;background:var(--ac);color:var(--bg);font:inherit;font-weight:600;cursor:pointer;margin:6px 6px 0 0}
+.btn.alt{background:transparent;color:var(--ac);border:1px solid var(--ac)}
+.ex{margin:12px 0 6px;padding:12px;border-left:4px solid var(--ac);background:var(--bg);border-radius:6px;font-size:.95rem}
+.big{font-size:2.4rem;font-weight:700;margin:6px 0}
+.rev{border-top:1px solid var(--bd);padding:10px 0;font-size:.95rem}
+.rev b{color:var(--no)}
+.rev span{color:var(--ok)}
+label{display:block;margin:8px 0}
+</style>
+</head>
+<body>
+<main><div class="card" id="app"></div></main>
+<script>
+// [question, [options], correctIndex]
+const Q=[
+["Which report is most likely prepared for internal managers rather than external users?", ["Annual report sent to shareholders", "Monthly departmental budget variance report", "Tax return filed with HMRC", "Audited financial statements"], 1],
+["Which of these is NOT one of the four core financial statements?", ["Statement of cash flows", "Statement of changes in equity", "Budget variance report", "Statement of financial position"], 2],
+["Which item normally appears on the income statement rather than the statement of financial position?", ["Bank loan", "Rent expense", "Trade payables", "Inventory"], 1],
+["Which item is least likely to appear on the statement of financial position?", ["Cash at bank", "Share capital", "Electricity expense", "Trade payables"], 2],
+["Standard hours for the actual output were 360, but employees actually worked 400 hours. What is the labour efficiency ratio?", ["90.0%", "111.1%", "110.0%", "100.0%"], 0],
+["Which is a key feature of a private limited company?", ["It is legally separate from its owners", "Owners are always personally liable for its debts", "It cannot own property", "It cannot sue or be sued"], 0],
+["A business has assets of £90,000 and liabilities of £35,000. What is its equity?", ["£125,000", "£55,000", "£35,000", "£90,000"], 1],
+["A customer pays £600 cash to settle an amount they owed. What is the journal?", ["Dr Cash £600; Cr Trade Receivables £600", "Dr Trade Receivables £600; Cr Cash £600", "Dr Cash £600; Cr Sales £600", "Dr Sales £600; Cr Cash £600"], 0],
+["Pay rent of £1,100 by bank transfer.", ["Dr Bank £1,100; Cr Rent expense £1,100", "Dr Rent Payable £1,100; Cr Rent expense £1,100", "Dr Rent expense £1,100; Cr Bank £1,100", "Dr Drawings £1,100; Cr Bank £1,100"], 2],
+["The owner invests £5,000 cash into the business.", ["Dr Cash £5,000; Cr Capital £5,000", "Dr Capital £5,000; Cr Cash £5,000", "Dr Drawings £5,000; Cr Cash £5,000", "Dr Cash £5,000; Cr Sales £5,000"], 0],
+["Sell goods on credit to Y Ltd for £2,800.", ["Dr Sales £2,800; Cr Trade Receivables £2,800", "Dr Trade Receivables £2,800; Cr Sales £2,800", "Dr Cash £2,800; Cr Sales £2,800", "Dr Trade Payables £2,800; Cr Sales £2,800"], 1],
+["Record annual depreciation of £2,000 on a machine.", ["Dr Machine £2,000; Cr Cash £2,000", "Dr Accumulated Depreciation £2,000; Cr Depreciation expense £2,000", "Dr Depreciation expense £2,000; Cr Accumulated Depreciation - Machine £2,000", "Dr Machine £2,000; Cr Depreciation expense £2,000"], 2],
+["An accountant is asked to audit a company where his brother is the finance director. Which ethical threat arises?", ["Familiarity", "Self-review", "Intimidation", "Advocacy"], 0],
+["A firm's AI tool for spotting unusual payments produces many false alarms. What is the most appropriate response?", ["Ignore all alerts", "Have staff review flagged items and refine the tool", "Delete the tool permanently", "Pay everything without checking"], 1],
+["An accountant is asked to actively promote a client's position in a dispute, compromising objectivity. Which threat is this?", ["Advocacy", "Self-review", "Intimidation", "Self-interest"], 0],
+["Which situation BEST illustrates a self-interest threat?", ["An accountant's bonus depends on the client's reported profit", "A manager threatens an accountant with dismissal", "An accountant reviews their own earlier work", "An accountant has known a client for many years"], 0],
+["A company claims its products are 'carbon neutral' without evidence while its emissions are rising. This is best described as:", ["Greenwashing", "Going concern doubt", "Off-balance sheet financing", "Creative accruals"], 0],
+["Which control weakness most likely lets one employee create a fake supplier and approve its payments?", ["Lack of segregation of duties", "Too much staff training", "Excessive data backups", "Frequent internal audits"], 0],
+["An accountant discovers a colleague is falsifying expense claims. What is the most appropriate first step?", ["Report it through internal procedures, such as compliance or line management", "Confront the colleague publicly", "Ignore it", "Join in to avoid conflict"], 0],
+["Which is a typical red flag for money laundering?", ["A large cash payment from an unclear source, with reluctance to provide ID", "A client paying an invoice on time", "A client asking for a quote", "A client using a business bank account"], 0],
+["Maple Ltd owes suppliers £150,000 and cannot pay. Priya owns 40% and has fully paid for her shares (£30,000). What is her position?", ["Personally liable for £60,000", "Not normally liable beyond her investment in the shares", "Personally liable for all £150,000", "Must repay the suppliers equally with other owners"], 1],
+["Year end is 30 June 2027. Services worth £2,400 were received in June but the invoice arrives in July. How is this treated?", ["Record the expense and an accrual of £2,400", "Record it only when paid", "Ignore it until the next year", "Record it as a prepayment"], 0],
+["On 1 October 2026 a company pays £6,000 for 12 months' insurance. What is the prepayment at 31 December 2026?", ["£1,500", "£4,500", "£6,000", "£3,000"], 1],
+["A trial balance shows debits of £84,300 and credits of £83,900. What does this indicate?", ["Errors exist and the £400 difference needs investigating", "The books are correct", "The business made £400 profit", "Credits should simply be reduced"], 0],
+["In the accounting cycle, what is the first step?", ["Collect and check source documents such as invoices", "Prepare the trial balance", "Prepare the financial statements", "Balance the ledger accounts"], 0],
+["A director asks the accountant to include a sale that occurs after year-end to hit a profit target. Which response shows integrity?", ["Refuse, record in the correct period and escalate if needed", "Agree because the director is senior", "Include half of the sale", "Hide the sale in a separate account"], 0],
+["Which is a valid reason an accountant may disclose confidential client information?", ["The disclosure is required by law", "A friend asks politely", "It would make an interesting story", "It might help win new clients"], 0],
+["A trainee is asked to prepare a VAT return in an area they do not understand. What is the best action?", ["Seek guidance or supervision before completing it", "Guess and hope", "Copy last year's figures unchecked", "Refuse all future work"], 0],
+["A major client threatens to withdraw its business unless the accountant signs off its figures. Which threat is this?", ["Intimidation", "Familiarity", "Self-review", "Advocacy"], 0],
+["A company chooses between a cheaper high-emission supplier and a slightly dearer low-emission one. What is the best sustainability approach?", ["Weigh the full financial, environmental and social impacts", "Consider purchase price only", "Ignore emissions as non-financial", "Choose the highest-emission option"], 0],
+["Which is evidence that may cast doubt on going concern?", ["Repeated losses and inability to pay debts when due", "Rising sales", "A new long-term loan secured", "A growing cash balance"], 0],
+["A clerk receives an urgent email, apparently from the CEO, asking for an immediate £25,000 transfer to a new account. What is the best action?", ["Verify independently through a known channel first", "Pay immediately", "Reply to the email asking if it is genuine", "Pay half now and half later"], 0],
+["Which purpose is most associated with management accounting?", ["Planning and controlling operations", "Preparing statutory accounts for Companies House", "Filing corporation tax", "Informing shareholders"], 0],
+["A manager prepares next year's budget for each department. Which purpose is illustrated?", ["Planning", "Controlling", "External reporting", "Auditing"], 0],
+["A bakery incurs: 1. flour used in loaves, 2. wages of bakers shaping loaves, 3. salary of the shop manager, 4. bakery rent. Which classification is correct?", ["Items 1 and 2 are direct; items 3 and 4 are indirect", "Items 1, 2 and 3 are direct; item 4 is indirect", "Items 1 and 4 are direct; items 2 and 3 are indirect", "All four are direct"], 0],
+["A delivery firm's fuel cost rises in proportion to miles driven. How is this classified?", ["Variable cost", "Fixed cost", "Stepped fixed cost", "Semi-variable cost"], 0],
+["A company needs one supervisor (£30,000 each) for every 20 workers. What is this cost behaviour?", ["Stepped fixed cost", "Variable cost", "Semi-variable cost", "Purely fixed cost"], 0],
+["An electricity bill has an £80 standing charge plus £0.20 per unit used. How is it classified?", ["Semi-variable cost", "Fixed cost", "Variable cost", "Stepped fixed cost"], 0],
+["ABC Ltd makes 800 units. Materials £24,000, direct labour £16,000, factory rent £5,000, supervisor salary £3,500. What is the prime cost?", ["£40,000", "£45,000", "£48,500", "£24,000"], 0],
+["Total costs were £38,000 at 2,000 units and £62,000 at 6,000 units. What is the variable cost per unit (high-low)?", ["£4", "£6", "£8", "£10"], 1],
+["Using the same data (£38,000 at 2,000 units; £62,000 at 6,000 units), estimate total cost at 5,000 units.", ["£50,000", "£54,000", "£56,000", "£60,000"], 2],
+["A company produces 2,500 units with variable cost of £8 per unit and fixed costs of £12,000. What is the total cost?", ["£20,000", "£32,000", "£12,000", "£44,000"], 1],
+["Tom's payslip shows gross pay £2,400, income tax £300, National Insurance £180 and pension £120. What is his net pay?", ["£1,800", "£2,100", "£2,580", "£600"], 0],
+["Which is a direct labour cost for a cabinet maker?", ["Wages of carpenters building a customer's specific cabinets", "Salary of the receptionist", "Wages of the factory cleaner", "Salary of the workshop manager"], 0],
+["Overtime is worked solely because one customer urgently requested Job 77. How is the overtime premium classified?", ["Direct labour cost of Job 77", "Indirect labour cost", "Non-production cost", "Direct material cost"], 0],
+["A piece-rate scheme raises output, but rework and defect costs also rise. What is the best conclusion?", ["Judge the scheme on output, quality and rework costs together", "It is successful because output is all that matters", "Scrap incentive schemes entirely", "Piece-rate always lowers quality"], 0],
+["A firm starts the year with 400 employees and ends with 500. During the year 54 employees leave. What is the labour turnover rate?", ["10.8%", "12.0%", "13.5%", "15.0%"], 1],
+["Sam earns £12 per hour for a 40-hour week; overtime is paid at time-and-a-half. Sam works 46 hours. What is his gross wage?", ["£552", "£588", "£576", "£828"], 1],
+["A piece rate is £1.80 per unit. Rina produces 240 units and earns a £25 bonus. What is her gross wage?", ["£432", "£457", "£482", "£265"], 1],
+["A firm has 20 direct workers on £15/hour, each working 5 hours of overtime for general production at time-and-a-half. A power cut causes 40 hours of idle time. What is the indirect labour cost?", ["£750", "£1,350", "£600", "£2,250"], 1]
+];
+const E=[
+"Variance reports support internal planning and control. The others are prepared for external users.",
+"A budget variance report is an internal management tool, not a core financial statement.",
+"Expenses such as rent go in the income statement. The others are balance sheet items.",
+"Expenses belong in the income statement. Assets, liabilities and equity appear on the statement of financial position.",
+"Efficiency = standard hours / actual hours = 360 / 400 = 90%.",
+"A company is a separate legal person, so it can own property, sue and be sued in its own name.",
+"Equity = Assets - Liabilities = £90,000 - £35,000 = £55,000.",
+"Cash increases (debit) and the customer's debt falls (credit Trade Receivables). The sale was already recorded.",
+"Rent is an expense (debit) and the bank balance falls (credit).",
+"Cash rises (debit) and the owner's equity rises (credit Capital).",
+"The customer now owes us (debit Trade Receivables) and revenue is earned (credit Sales).",
+"Depreciation is an expense (debit), with the credit going to accumulated depreciation, a contra-asset.",
+"A close personal or family relationship creates a familiarity threat to objectivity.",
+"Human review and ongoing tuning keeps the benefit of automation while controlling errors.",
+"Promoting a client's position to the point objectivity is lost is an advocacy threat.",
+"A financial interest in the outcome creates a self-interest threat.",
+"Unsupported or misleading environmental claims are greenwashing.",
+"Without segregation of duties, one person controls the whole process and can commit fraud.",
+"Use internal reporting channels first and escalate if the matter is not resolved.",
+"Unexplained cash and avoiding identity checks are classic warning signs.",
+"Limited liability caps a shareholder's loss at the amount invested or unpaid on shares.",
+"Under the accruals concept the cost belongs to the period it was incurred, creating a liability.",
+"£6,000 / 12 = £500 per month. Nine months remain, so £500 x 9 = £4,500 prepaid.",
+"A trial balance should balance. A difference signals an error to investigate.",
+"Source documents are the starting evidence for every transaction.",
+"Integrity means honesty and fair presentation even under pressure.",
+"Confidentiality can be overridden by legal or professional duty, or with authorisation.",
+"Professional competence and due care means knowing your limits and getting help.",
+"Pressure or threats that deter an accountant from acting properly is an intimidation threat.",
+"Sustainability decisions consider long-term financial and environmental or social effects.",
+"Persistent losses and unpaid debts suggest the business may not continue.",
+"This is a classic payment fraud. Always verify using established contact details.",
+"Management accounting supports internal planning, control and decisions.",
+"Setting future targets through a budget is planning.",
+"Ingredients and baking labour trace to the product. Management salary and rent are overheads.",
+"A cost that rises proportionately with activity is variable.",
+"The cost is fixed within a range, then jumps when another supervisor is needed.",
+"A fixed element plus a usage element is semi-variable.",
+"Prime cost = direct materials + direct labour = £24,000 + £16,000 = £40,000.",
+"(£62,000 - £38,000) / (6,000 - 2,000) = £24,000 / 4,000 = £6.",
+"Variable £6/unit. Fixed = £38,000 - (2,000 x 6) = £26,000. At 5,000 units: £26,000 + £30,000 = £56,000.",
+"(2,500 x £8) + £12,000 = £20,000 + £12,000 = £32,000.",
+"Net pay = £2,400 - (£300 + £180 + £120) = £1,800.",
+"Direct labour can be traced to the product being made. The others are indirect.",
+"When overtime is caused by a specific job, the premium is traced to that job.",
+"Effective evaluation uses several measures, not productivity alone.",
+"Turnover = leavers / average employees = 54 / ((400 + 500) / 2) = 54 / 450 = 12%.",
+"Basic: 40 x £12 = £480. Overtime: 6 x £18 = £108. Total £588.",
+"240 x £1.80 = £432, plus £25 = £457.",
+"Overtime premium: 20 x 5 x £7.50 = £750. Idle time: 40 x £15 = £600. Total £1,350."
+];
+const app=document.getElementById("app");
+let items,i,score,log,locked,shuffleOpts=true;
+
+function shuffle(a){a=a.slice();for(let k=a.length-1;k>0;k--){const j=Math.floor(Math.random()*(k+1));[a[k],a[j]]=[a[j],a[k]]}return a}
+function esc(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;")}
+
+function home(){
+  app.innerHTML=`<h1>Accounting Quiz 2</h1>
+  <p>${Q.length} multiple-choice questions · 2 points each · instant feedback.</p>
+  <label><input type="checkbox" id="sq" checked> Shuffle question order</label>
+  <button class="btn" id="go">Start quiz</button>`;
+  document.getElementById("go").onclick=()=>{
+    start(document.getElementById("sq").checked);
+  };
+}
+
+function balance(){
+  // spread the correct answer evenly across A/B/C/D in random order
+  const n=items.length;
+  const slots=shuffle(Array.from({length:n},(_,k)=>k%4));
+  items.forEach((x,k)=>{
+    const right=x.o.find(o=>o.c);
+    const rest=shuffle(x.o.filter(o=>!o.c));
+    const t=Math.min(slots[k],rest.length);
+    rest.splice(t,0,right);
+    x.o=rest;
+  });
+}
+function start(sq){
+  items=Q.map((q,n)=>({q:q[0],e:E[n],o:q[1].map((t,k)=>({t,c:k===q[2]}))}));
+  if(sq)items=shuffle(items);
+  items.forEach(x=>x.o=shuffle(x.o));
+  balance();
+  i=0;score=0;log=[];show();
+}
+
+function show(){
+  const it=items[i];locked=false;
+  app.innerHTML=`<div class="meta"><span>Question ${i+1} of ${items.length}</span><span>Score ${score*2}</span></div>
+  <div class="bar"><i style="width:${i/items.length*100}%"></i></div>
+  <p><strong>${esc(it.q)}</strong></p>
+  <div id="opts">${it.o.map((o,k)=>`<button class="opt" data-k="${k}">${esc(o.t)}</button>`).join("")}</div>
+  <div id="nx"></div>`;
+  app.querySelectorAll(".opt").forEach(b=>b.onclick=()=>pick(+b.dataset.k));
+}
+
+function pick(k){
+  if(locked)return;locked=true;
+  const it=items[i],ok=it.o[k].c;
+  if(ok)score++;
+  log.push({q:it.q,e:it.e,mine:it.o[k].t,right:it.o.find(o=>o.c).t,ok});
+  app.querySelectorAll(".opt").forEach((b,n)=>{b.disabled=true;if(it.o[n].c)b.classList.add("ok");else if(n===k)b.classList.add("no")});
+  const last=i===items.length-1;
+  document.getElementById("nx").innerHTML=`<div class="ex"><strong>${ok?"Correct.":"Not quite."}</strong> ${esc(it.e)}</div><button class="btn" id="n">${last?"See results":"Next"}</button>`;
+  document.getElementById("n").onclick=()=>{if(last)end();else{i++;show()}};
+}
+
+function end(){
+  const pct=Math.round(score/items.length*100),wrong=log.filter(l=>!l.ok);
+  app.innerHTML=`<h1>Results</h1><div class="big">${score*2} / ${items.length*2}</div>
+  <p>${score} of ${items.length} correct (${pct}%)</p>
+  <button class="btn" id="again">Try again</button>
+  ${wrong.length?'<button class="btn alt" id="rw">Retry missed only</button>':""}
+  <h3>${wrong.length?"Review of missed questions":"Perfect score!"}</h3>
+  ${wrong.map(l=>`<div class="rev"><p><strong>${esc(l.q)}</strong></p><p><b>Your answer:</b> ${esc(l.mine)}</p><p><span>Correct:</span> ${esc(l.right)}</p><p>${esc(l.e)}</p></div>`).join("")}`;
+  document.getElementById("again").onclick=home;
+  const rw=document.getElementById("rw");
+  if(rw)rw.onclick=()=>{
+    const miss=new Set(wrong.map(l=>l.q));
+    items=shuffle(items.filter(x=>miss.has(x.q)));
+    items.forEach(x=>x.o=shuffle(x.o));
+    balance();
+    i=0;score=0;log=[];show();
+  };
+}
+home();
+</script>
+</body>
+</html>
